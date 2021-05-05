@@ -1184,6 +1184,8 @@ body.ie ._ibg img {
   -webkit-transition: all 0.5s;
   -o-transition: all 0.5s;
   transition: all 0.5s;
+  position: relative;
+  z-index: 10;
 }
 
 .footer__tabs {
@@ -2095,12 +2097,10 @@ body.ie ._ibg img {
   }
 
   .footer__link:hover {
-    font-size: 19px;
+    -webkit-transform: scale(1.2) translateX(10%);
+        -ms-transform: scale(1.2) translateX(10%);
+            transform: scale(1.2) translateX(10%);
     color: #f45e1f;
-    white-space: nowrap;
-    -webkit-transform: translate(-10%, 0%);
-        -ms-transform: translate(-10%, 0%);
-            transform: translate(-10%, 0%);
   }
 
   .social-footer__icon:hover {
