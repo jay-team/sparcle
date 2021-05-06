@@ -1351,13 +1351,6 @@ function scroll_scroll() {
 			let block_offset = offset(block).top;
 			let block_height = block.offsetHeight;
 
-			/*
-			if ((src_value > block_offset - block_height) && src_value < (block_offset + block_height) && window.innerHeight > scr_min_height && window.innerWidth > 992) {
-				let scrProcent = (src_value - block_offset) / block_height * 100;
-				scrParallax(block, scrProcent, block_height);
-			}
-			*/
-
 			if ((pageYOffset > block_offset - window.innerHeight / 1.5) && pageYOffset < (block_offset + block_height) - window.innerHeight / 5) {
 				block.classList.add('_scr-sector_active');
 			} else {
@@ -1455,17 +1448,16 @@ function scroll_load_item(scr_item) {
 		}
 	}
 }
-function scrParallax(block, scrProcent, blockHeight) {
-	let prlxItems = block.querySelectorAll('._prlx-item');
+function scrParallax() {
+	let prlxItems = document.querySelectorAll('._prlx-item');
 	if (prlxItems.length > 0) {
 		for (let index = 0; index < prlxItems.length; index++) {
 			const prlxItem = prlxItems[index];
-			let prlxItemAttr = (prlxItem.dataset.prlx) ? prlxItem.dataset.prlx : 3;
-			const prlxItemValue = -1 * (blockHeight / 100 * scrProcent / prlxItemAttr);
-			prlxItem.style.cssText = `transform: translateY(${prlxItemValue}px);`;
+			prlxItem.style.cssText = `transform: translateY(${pageYOffset/3}px);`;
 		}
 	}
 }
+window.addEventListener('scroll', scrParallax);
 //FullScreenScroll
 if (scr_blocks.length > 0 && !isMobile.any()) {
 	disableScroll();
@@ -1584,6 +1576,7 @@ if (link) {
 			for (let index = 0; index < old_current_link.length; index++) {
 				let el = old_current_link[index];
 				el.classList.remove('_active');
+            el.parentElement.classList.remove('_active-scroll');
 			}
 		}
 		for (let index = 0; index < blocks.length; index++) {
@@ -1597,6 +1590,7 @@ if (link) {
 					for (let index = 0; index < current_links.length; index++) {
 						let current_link = current_links[index];
 						current_link.classList.add('_active');
+                  current_link.parentElement.classList.add('_active-scroll');
 					}
 				}
 			}
@@ -1791,7 +1785,6 @@ if (sliders) {
 			}
 		}
 		if (slider.classList.contains('_gallery')) {
-			//slider.data('lightGallery').destroy(true);
 		}
 	}
 	sliders_bild_callback();
@@ -1827,13 +1820,6 @@ if (sliderScrollItems.length > 0) {
 function sliders_bild_callback(params) { }
 
 let slider_feedback = new Swiper('.feedback__slider', {
-	/*
-	effect: 'fade',
-	autoplay: {
-		delay: 3000,
-		disableOnInteraction: false,
-	},
-	*/
 	observer: true,
 	observeParents: true,
 	slidesPerView: 3,
@@ -1841,23 +1827,6 @@ let slider_feedback = new Swiper('.feedback__slider', {
 	autoHeight: true,
 	speed: 800,
    loop: true,
-	//touchRatio: 0,
-	//simulateTouch: false,
-	//loop: true,
-	//preloadImages: false,
-	//lazy: true,
-	// Dotts
-	//pagination: {
-	//	el: '.slider-quality__pagging',
-	//	clickable: true,
-	//},
-	// Arrows
-   /*
-	navigation: {
-		nextEl: '.about__more .more__item_next',
-		prevEl: '.about__more .more__item_prev',
-	},
-   */
    autoplay: {
 		// Пауза между прокруткой
 		delay: 3000,
@@ -1897,10 +1866,6 @@ let slider_feedback = new Swiper('.feedback__slider', {
 			ibg();
 		},
 	}
-	// And if we need scrollbar
-	//scrollbar: {
-	//	el: '.swiper-scrollbar',
-	//},
 });
 
 // Запуск автоппрокрутки при наведении
@@ -1916,8 +1881,6 @@ sliderBlock.addEventListener("mouseleave", function (e) {
 	slider_feedback.params.autoplay.delay = 3000;
 	slider_feedback.autoplay.start();
 });
-//('files/fullpage.js', {})
-
 function changeTotal() {
    let totalTitle = document.querySelector('.total-book__title span');
    let bedroomsValue =  parseInt(document.querySelector('.bedrooms').querySelector('input').value);
@@ -2078,3 +2041,78 @@ window.onload = function () {
 			coordYprocent = coordY / parallaxHeight * 100;
 		});
 }
+
+//========================================================================================================================================================
+
+   const target = document.querySelector(".target");
+   const links = document.querySelectorAll(".menu__list li");
+ 
+   function mouseenterFunc() {
+       const width = this.getBoundingClientRect().width;
+       const left = this.getBoundingClientRect().left;
+       const bottom = this.getBoundingClientRect().top;
+       target.style.width = `${width}px`;
+       target.style.left = `${left}px`;
+       target.style.bottom = `${bottom}px`;
+       target.style.transform = "translate(0,30%)";
+       target.style.opacity = "1";
+   }
+   function mouseleaveFunc() {
+      const active = document.querySelector(".menu__list li._active-scroll");
+      if (!this.classList.contains('_active-scroll') && active) {
+         const width = active.getBoundingClientRect().width;
+         const left = active.getBoundingClientRect().left;
+         const bottom = active.getBoundingClientRect().top;
+         target.style.width = `${width}px`;
+         target.style.left = `${left}px`;
+         target.style.bottom = `${bottom}px`;
+         target.style.transform = "translate(0,30%)";
+         target.style.opacity = "1";
+      } else if (this.classList.contains('_active-scroll')) {
+         target.style.opacity = "1";
+      } else{
+         target.style.opacity = "0";
+      }
+   }
+
+   function scrollFunc() {
+      for (let index = 0; index < links.length; index++) {
+         const link = links[index];
+         if (link.classList.contains('_active-scroll')) {
+            const width = link.getBoundingClientRect().width;
+            const left = link.getBoundingClientRect().left;
+            const bottom = link.getBoundingClientRect().top;
+            target.style.width = `${width}px`;
+            target.style.left = `${left}px`;
+            target.style.bottom = `${bottom}px`;
+            target.style.transform = "translate(0,30%)";
+            target.style.opacity = "1";
+            break;
+         } else{
+            target.style.opacity = "0";
+         }
+      }
+   }
+   
+   if (window.innerWidth > 767) {
+      for (let i = 0; i < links.length; i++) {
+         links[i].addEventListener("click", (e) => e.preventDefault());
+         links[i].addEventListener("mouseenter", mouseenterFunc);
+         links[i].addEventListener("mouseleave", mouseleaveFunc);
+       }
+       window.addEventListener("scroll", scrollFunc);
+       window.addEventListener("load", scrollFunc);
+       window.addEventListener("resize", resizeFunc);
+   }
+ 
+   function resizeFunc() {
+     const active = document.querySelector(".menu__list li._active-scroll");
+ 
+     if (active) {
+       const left = active.getBoundingClientRect().left;
+       const bottom = active.getBoundingClientRect().top;
+ 
+       target.style.left = `${left}px`;
+       target.style.bottom = `${bottom}px`;
+     }
+   }
